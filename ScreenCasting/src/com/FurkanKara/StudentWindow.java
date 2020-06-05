@@ -100,10 +100,18 @@ public class StudentWindow {
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (Client.connected == true) {						
-						student.sendFIN();
+					if (Client.connected == true) {	
+						if (Client.isBusy == true) {
+							if (Client.imageSaverFlag == false) {
+								JOptionPane.showMessageDialog(null,  "You must wait until the recording process ends!", "Error", JOptionPane.ERROR_MESSAGE);								
+							} else {
+								JOptionPane.showMessageDialog(null,  "You must stop recording!", "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						} else {							
+							student.sendFIN();
+							System.exit(0);
+						}
 					}
-					System.exit(0);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}

@@ -47,6 +47,8 @@ public class Client implements Runnable{
 	
 	String homePath;
 	
+	static boolean isBusy = false;
+	
 	public Client(String name, String addr) throws IOException{
 		
 		this.studentName = name;
@@ -81,7 +83,8 @@ public class Client implements Runnable{
 	
 	
 	public void saveImages() {
-		System.out.println("save images is called!");
+		this.isBusy = true;
+
 		class ImageSaver implements Runnable{
 			public ImageSaver() {
 				imageSaverFlag = true;
@@ -97,7 +100,7 @@ public class Client implements Runnable{
 				File file = new File(homePath + "/Desktop/photos");
 				
 				file.mkdirs();
-				System.out.println(file.toString() + " is created!");
+
 				while(imageSaverFlag) {
 					System.out.println("photo saved!");
 					try {
@@ -109,6 +112,7 @@ public class Client implements Runnable{
 						Thread.sleep(20);
 					} catch (Exception ex) {
 						System.out.println("Exception in image saver thread.");
+						Client.isBusy = false;
 					}
 				}
 			}

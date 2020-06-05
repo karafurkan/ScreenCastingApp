@@ -17,11 +17,11 @@ import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
 
-public class VideoCreater {
+public class VideoCreater{
 
     private static Dimension screenBounds;
 
-
+    private int imageNumber=0;
     
     private static String homePath;
 
@@ -30,6 +30,8 @@ public class VideoCreater {
     	setHomePath();
     	File file = new File(homePath + "/Desktop/photos");
     	file.mkdirs();
+    	
+    	setImageNumber();
     	
     }
 
@@ -47,6 +49,11 @@ public class VideoCreater {
     	return file.list().length;
     }
     
+    public void setImageNumber() {
+    	File file = new File(homePath + "/Desktop/photos");
+    	this.imageNumber = file.list().length;
+    }
+    
     public void createVideo() {
     	
 		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
@@ -59,9 +66,6 @@ public class VideoCreater {
         writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_MPEG4,
                 screenBounds.width / 2, screenBounds.height / 2);
         long startTime = System.nanoTime();
-
-        
-        int imageNumber = getImageNumber();
         
         for (int index = 0; index < imageNumber; index++) {
 
@@ -117,5 +121,7 @@ public class VideoCreater {
         return image;
 
     }
+
+
 
 }
