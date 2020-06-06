@@ -36,7 +36,7 @@ public class ServerListener implements Runnable{
 	
 	public ServerListener() throws SocketException, UnknownHostException {
 		
-	
+		
 		serverSocket = new DatagramSocket(9876);
 		
 		
@@ -44,13 +44,20 @@ public class ServerListener implements Runnable{
 	}
 	
 	
-	
+	/*
+	 * This functions removes the student info from the arraylist and hashmaps.
+	 */
 	public void kickStudent(String name) {
 		StudentsPorts.remove(name);
 		StudentAddrs.remove(name);
 		Students.remove(name);
 	}
 
+	
+	/*
+	 * When the teacher wants to kick a student, this function sends the kick packet to the client side to let them know 
+	 * that he/she is kicked.
+	 */
 	public void sendKickPacket(InetAddress addr, int port) {
 		
 		Checksum checksum = new CRC32();
@@ -73,6 +80,11 @@ public class ServerListener implements Runnable{
 		}
 	}
 
+	/*
+	 * When a client wants to join, he or she sends a 'Hello' request, this function is responsible for checking the data in the arraylist
+	 * to determine whether the nickname is already taken. If it is the case then this function sends an error message to the client side.
+	 * Otherwise, sends an 'Ok' message.
+	 */
 	public void helloRequestHandler(int port, String name, InetAddress addr) {
 		if (StudentsPorts.containsKey(name)) {
 			System.out.println("WARNING!" + name + " is already connected to the server.");
@@ -87,9 +99,7 @@ public class ServerListener implements Runnable{
 		} else {
 			
 			System.out.println(name + " is connected to the server.");
-			StudentsPorts.put(name,port);
-			StudentAddrs.put(name,addr);
-			Students.add(name);
+
 			ByteBuffer sendData = ByteBuffer.allocate(4);
 			sendData.putInt(200); // Sends 'ok' message indicating that the student is added successfully.
 			DatagramPacket sendPacket = new DatagramPacket(sendData.array(), sendData.capacity(), addr, port);
@@ -98,7 +108,6 @@ public class ServerListener implements Runnable{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
 		}
 	}
 
@@ -130,9 +139,11 @@ public class ServerListener implements Runnable{
 				helloRequestHandler(port,splitted_message[1], addr);
 				
 			} else if (splitted_message[0].equals("READY")) {
-				
-				
 
+				StudentsPorts.put(splitted_message[1],port);
+				StudentAddrs.put(splitted_message[1],addr);
+				Students.add(splitted_message[1]);
+				
 			} else if(splitted_message[0].equals("FIN")) {
 				kickStudent(splitted_message[1]);		
 				Thread th = new Thread(new Runnable() {

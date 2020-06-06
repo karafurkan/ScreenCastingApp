@@ -70,7 +70,9 @@ public class ServerSender implements Runnable{
 		return scaledImage; 
 	}
 	
-	
+	/*
+	 * Calculates the checksum of the given data.
+	 */
 	public long getChecksum(byte[] arr, int offset, int length) {
 		
 		Checksum checksum = new CRC32();

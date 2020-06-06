@@ -56,7 +56,7 @@ public class Client implements Runnable{
 		System.out.println("Client is running...");
 	
 		clientSocket = new DatagramSocket();
-		clientSocket.setSoTimeout(20); // timeouts after 20 milliseconds 
+		clientSocket.setSoTimeout(20);
 		
 		IPAddress = InetAddress.getByName(addr);
 		//IPAddress = InetAddress.getByName("localhost");
@@ -74,16 +74,23 @@ public class Client implements Runnable{
 		
 	}
 	
-	
+	/*
+	 * Sets the home path in order to locate the Desktop folder.
+	 */
 	public void setHomePath() {
 		FileSystemView filesys = FileSystemView.getFileSystemView();
 		File[] roots = filesys.getRoots();
 		this.homePath = filesys.getHomeDirectory().toString();
 	}
 	
-	
+	/*
+	 * When the user wants to record the session, this function is called initially to save the screenshot
+	 * sent by the server. The reason why a buffer is not kept to do this is that it will overflow after sometime.
+	 * As this function runs independently from the client's job, in other words there is another thread
+	 * it won't effect the receiving function.
+	 */
 	public void saveImages() {
-		this.isBusy = true;
+		this.isBusy = true; // If the user wants the leave from the lecture this flag won't let him until it stop recording.
 
 		class ImageSaver implements Runnable{
 			public ImageSaver() {
@@ -123,6 +130,12 @@ public class Client implements Runnable{
 		
 	}
 	
+	
+	/*
+	 * When the user click on the Stop Recording button, this function will be called.
+	 * This function creates a video from the images located in the Desktop folder.
+	 * Afterwards, it deletes the images.
+	 */
 	public void createVideo() {
 		imageSaverFlag = false;
 		VideoCreater creater = new VideoCreater();
@@ -139,6 +152,13 @@ public class Client implements Runnable{
 	}
 	
 	
+	/*
+	 * This function sends a 'Hello' request to the server in order to join the lecture'
+	 * If this function receives 'Ok' message, sends 'Ready' message back to the server.
+	 * Otherwise, sends the 'Hello' message again. After sending 100 'Hello requests' it quits.
+	 * If this function receives 'Error' message from the server indicating that the nickname 
+	 * provided by user is already taken, It asks for another nickname. 
+	 */
 	public boolean sendHello() throws IOException {
 		
 		// After sending 100 "Hello" requests to the server, if there is no response, exits.
@@ -198,7 +218,7 @@ public class Client implements Runnable{
 		 * Sending "READY" message to let the server know that the client is ready to receive.
 		 */
 		
-		sentence = "READY"; 
+		sentence = "READY " + studentName; 
 		data = ByteBuffer.allocate(sentence.getBytes().length);
 		data.put(sentence.getBytes());
 		
@@ -210,7 +230,10 @@ public class Client implements Runnable{
 
 	
 	
-	
+	/*
+	 * When the user disconnect from the lecture or close the window,
+	 * this function is called in order to let the server know that user is left.
+	 */
 	public void sendFIN() throws IOException {
 		String sentence = "FIN " + studentName;  
 		ByteBuffer data = ByteBuffer.allocate(sentence.getBytes().length);
@@ -222,7 +245,10 @@ public class Client implements Runnable{
 	}
 	
 
-	
+	/*
+	 * When the user click on the 'Capture Image' button to take a snapshot, this function is called.
+	 * This function takes the last image sent by the server and stores it in the Desktop folder.
+	 */
 	public void captureImage() throws IOException {
 		
 		if (image != null) {
@@ -244,6 +270,19 @@ public class Client implements Runnable{
 		
 	}
 	
+	
+	/*
+	 * This functions is responsible for receiving the images that are being sent by the server.
+	 * 
+	 * If this function successfully receives the whole image, 
+	 * it stores the image in a global BufferedImage variable and let the other functions use it if needed.
+	 * 
+	 * As this function receives the whole image chunk by chunk,
+	 * if there is any error in any chunk, the function drops the whole image.
+	 * 
+	 * For the error detection; checksum, chunk number, size of the packet, the total size of the image are checked.  
+	 *
+	 */
 	public void receivePackets() throws IOException{
 		
 		timeoutCounter++;
@@ -289,15 +328,9 @@ public class Client implements Runnable{
 			data.rewind();
 			
 			long checksumVal = data.getLong();
-			
-			
-			
+					
 			
 			int receivedChunkNumber = data.getInt();
-			
-			//System.out.println("received chunk number: " + receivedChunkNumber);
-			//System.out.println("expected chunk number: " + expectedChunkNumber);
-			
 			
 			
 			if (receivedChunkNumber == -1) { 
