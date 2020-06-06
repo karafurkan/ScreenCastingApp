@@ -184,6 +184,28 @@ public class StudentWindow {
 		JMenu mnNewMenu_1 = new JMenu("Help");
 		menuBar.add(mnNewMenu_1);
 		
+		JMenuItem devInfo = new JMenuItem("Developer Info");
+		devInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Furkan KARA\nfurkankara.me\ngithub.com/karafurkan\nfurkan.kara@std.yeditepe.edu.tr", "Developer", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		mnNewMenu_1.add(devInfo);
+		
+		JMenuItem help = new JMenuItem("Help");
+		help.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "You can join the lecture by click on the 'Connect' button. You should provide the lecturer's IP Address and your name."
+						+ "\nIf the host that you provided their's IP is not sharing their screen, the application will close."
+						+ "\nIf your nickname is already taken, you will be asked to enter a different nickname."
+						+ "\nYou can take a screenshot by clicking on the 'Capture Image' button, it will be saved on your Desktop."
+						+ "\nYou can record the session by clicking on the 'Start recording' button, then you must stop recording by clicking on the 'Stop Recording' button."
+						+ "\nThe videos you record will be saved on your Desktop."
+						+ "\nYou can either click on the 'Disconnect' button or 'Exit' button to leave from the lecture.", "Help", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		mnNewMenu_1.add(help);
+		
 		img = new JLabel();
 		frame.getContentPane().add(img, BorderLayout.CENTER);
 	}

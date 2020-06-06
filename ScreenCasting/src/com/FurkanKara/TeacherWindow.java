@@ -121,6 +121,24 @@ public class TeacherWindow {
 		
 		JMenu helpMenu = new JMenu("Help");
 		menuBar.add(helpMenu);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Developer Info");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Furkan KARA\nfurkankara.me\ngithub.com/karafurkan\nfurkan.kara@std.yeditepe.edu.tr", "Developer", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		helpMenu.add(mntmNewMenuItem);
+		
+		JMenuItem help = new JMenuItem("Help");
+		help.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "To start the screen casting you should click on the 'Share Screen' button.\nYou can kick the students who are connected at the moment"
+						+ " by clicking on the 'kick' button."
+						+ "\nWhen a student leaves from the lecture, you'll be notified via a notification box.", "Help", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		helpMenu.add(help);
 	}
 
 
